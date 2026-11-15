@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Settings,
   ChevronRight,
@@ -12,6 +12,9 @@ import {
   Shield,
   Moon,
   Sparkles,
+  Server,
+  Database,
+  RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { taskService } from '../services/taskService';
@@ -21,6 +24,23 @@ export const ProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [nameInput, setNameInput] = useState(profile.display_name || 'Saad');
   const [backupMessage, setBackupMessage] = useState('');
+  const [backendStatus, setBackendStatus] = useState<{
+    connected: boolean;
+    database: string;
+    source: string;
+  } | null>(null);
+  const [checkingBackend, setCheckingBackend] = useState(false);
+
+  const checkStatus = async () => {
+    setCheckingBackend(true);
+    const status = await taskService.checkBackendHealth();
+    setBackendStatus(status);
+    setCheckingBackend(false);
+  };
+
+  useEffect(() => {
+    checkStatus();
+  }, []);
 
   const handleExportBackup = () => {
     const json = taskService.exportBackup();
@@ -131,6 +151,46 @@ export const ProfilePage: React.FC = () => {
             <p className="text-[10px] font-bold text-[#8B88A0]">{s.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* Backend & Cloud Database Status Card */}
+      <div className="rounded-2xl bg-white p-4 border border-[#EDE8F5] shadow-xs space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Server className="h-4 w-4 text-[#6C5CE7]" />
+            <span className="text-xs font-black text-[#1E1B2E]">Cloud Sync & Backend</span>
+          </div>
+          <button
+            onClick={checkStatus}
+            disabled={checkingBackend}
+            className="flex items-center gap-1 rounded-full bg-[#F4F3F8] px-2.5 py-1 text-[10px] font-bold text-[#6C5CE7] hover:bg-[#EDE8F5] active:scale-95 transition-all"
+          >
+            <RefreshCw className={`h-3 w-3 ${checkingBackend ? 'animate-spin' : ''}`} />
+            <span>Test</span>
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between text-xs pt-1">
+          <div className="flex items-center gap-2">
+            <span
+              className={`h-2.5 w-2.5 rounded-full ${
+                backendStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'
+              }`}
+            />
+            <span className="font-extrabold text-[#1E1B2E]">
+              {backendStatus?.connected ? 'Render Backend Online' : 'Local Storage Mode'}
+            </span>
+          </div>
+          <span className="text-[10px] font-bold text-[#8B88A0] capitalize">
+            {backendStatus?.database || 'Local'}
+          </span>
+        </div>
+
+        <p className="text-[10px] text-[#8B88A0] font-medium leading-relaxed">
+          {backendStatus?.connected
+            ? `Tasks are saved to Render backend & synced with ${backendStatus.database}.`
+            : 'Tasks are currently saved locally on your device. Set VITE_API_URL on Vercel to sync with Render.'}
+        </p>
       </div>
 
       {backupMessage && (

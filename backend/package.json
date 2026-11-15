@@ -1,0 +1,17 @@
+{
+  "name": "taskora-backend",
+  "version": "1.0.0",
+  "description": "Supabase backend configuration, migrations, edge functions, and database types for Taskora",
+  "scripts": {
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "supabase:reset": "npx supabase db reset",
+    "supabase:gen-types": "npx supabase gen types typescript --local > types/database.types.ts",
+    "supabase:deploy-functions": "npx supabase functions deploy",
+    "supabase:deploy-db": "npx supabase db push"
+  },
+  "devDependencies": {
+    "supabase": "^2.15.8"
+  }
+}

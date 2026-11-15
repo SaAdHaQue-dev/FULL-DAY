@@ -11,7 +11,7 @@ import { PlanDetailModal } from '../components/tasks/PlanDetailModal';
 import { useTasks } from '../context/TaskContext';
 
 export const CalendarPage: React.FC = () => {
-  const { setIsQuickAddOpen } = useTasks();
+  const { tasks, setIsQuickAddOpen } = useTasks();
   const [activeDateIndex, setActiveDateIndex] = useState(3); // 21 Thu
   const [selectedPlanTask, setSelectedPlanTask] = useState<{
     title: string;
@@ -29,7 +29,7 @@ export const CalendarPage: React.FC = () => {
     { dayNum: 24, dayName: 'Sun' },
   ];
 
-  const scheduleItems = [
+  const baseSchedule = [
     {
       time: '09:00 AM',
       taskTime: '09:20-10:45',
@@ -38,6 +38,7 @@ export const CalendarPage: React.FC = () => {
       assignedAvatar: mockTeamMembers[0].avatar_url,
       bgColor: 'bg-[#FF5EEA]',
       textColor: 'text-white',
+      showAvatars: false,
     },
     {
       time: '11:00 AM',
@@ -57,6 +58,7 @@ export const CalendarPage: React.FC = () => {
       assignedAvatar: mockTeamMembers[1].avatar_url,
       bgColor: 'bg-[#54C5FF]',
       textColor: 'text-[#18171E]',
+      showAvatars: false,
     },
     {
       time: '02:30 PM',
@@ -66,8 +68,23 @@ export const CalendarPage: React.FC = () => {
       assignedAvatar: mockTeamMembers[2].avatar_url,
       bgColor: 'bg-[#7065F0]',
       textColor: 'text-white',
+      showAvatars: false,
     },
   ];
+
+  const userScheduleItems = tasks.slice(0, 3).map((t, idx) => ({
+    time: idx === 0 ? '03:30 PM' : idx === 1 ? '04:30 PM' : '05:30 PM',
+    taskTime: t.time_slot || '03:30-04:30',
+    title: t.title,
+    description: t.description || undefined,
+    assignedTo: 'Saad',
+    assignedAvatar: mockTeamMembers[0].avatar_url,
+    bgColor: idx % 2 === 0 ? 'bg-[#7065F0]' : 'bg-[#54C5FF]',
+    textColor: idx % 2 === 0 ? 'text-white' : 'text-[#18171E]',
+    showAvatars: false,
+  }));
+
+  const allSchedule = [...baseSchedule, ...userScheduleItems];
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in duration-150">
@@ -135,7 +152,7 @@ export const CalendarPage: React.FC = () => {
 
         {/* Chronological Rail */}
         <div className="mt-8 space-y-5">
-          {scheduleItems.map((item, index) => (
+          {allSchedule.map((item, index) => (
             <div key={index} className="flex items-start gap-4">
               <div className="w-20 shrink-0 pt-2 text-right">
                 <span className="text-xs font-bold text-[#8E8B99]">{item.time}</span>

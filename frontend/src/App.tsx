@@ -6,9 +6,9 @@ import { TaskProvider } from './context/TaskContext';
 import { AppShell } from './components/layout/AppShell';
 
 import { DashboardPage } from './pages/DashboardPage';
-import { ExplorePage } from './pages/ExplorePage';
-import { PracticePage } from './pages/PracticePage';
-import { ProgressPage } from './pages/ProgressPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { AllTasksPage } from './pages/AllTasksPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
 import { ProfilePage } from './pages/ProfilePage';
 
 export function App() {
@@ -18,11 +18,12 @@ export function App() {
         <TaskProvider>
           <BrowserRouter>
             <Routes>
-              {/* Zero Sign-in Barrier */}
+              {/* Zero Sign-in Barrier: Instant personal access */}
               <Route path="/login" element={<Navigate to="/" replace />} />
               <Route path="/register" element={<Navigate to="/" replace />} />
 
-              {/* 5 Primary App Shell Views matching image */}
+              {/* 5 Core PRD Application Views */}
+              {/* 1. Today's Dashboard */}
               <Route
                 path="/"
                 element={
@@ -31,30 +32,38 @@ export function App() {
                   </AppShell>
                 }
               />
+
+              {/* 2. Calendar & Chronological Timeline */}
               <Route
-                path="/explore"
+                path="/calendar"
                 element={
                   <AppShell>
-                    <ExplorePage />
+                    <CalendarPage />
                   </AppShell>
                 }
               />
+
+              {/* 3. Task Management (All Tasks, Inbox, Projects, Filtering & Sorting) */}
               <Route
-                path="/practice"
+                path="/tasks"
                 element={
                   <AppShell>
-                    <PracticePage />
+                    <AllTasksPage />
                   </AppShell>
                 }
               />
+
+              {/* 4. Productivity Analytics (Streaks, Completion Rate, Pomodoro Timer) */}
               <Route
-                path="/progress"
+                path="/analytics"
                 element={
                   <AppShell>
-                    <ProgressPage />
+                    <AnalyticsPage />
                   </AppShell>
                 }
               />
+
+              {/* 5. Profile & Workstation Settings (Cloud Sync, MongoDB, Backups) */}
               <Route
                 path="/profile"
                 element={
@@ -64,11 +73,13 @@ export function App() {
                 }
               />
 
-              {/* Aliases for quick compatibility */}
-              <Route path="/tasks" element={<Navigate to="/explore" replace />} />
-              <Route path="/calendar" element={<Navigate to="/practice" replace />} />
-              <Route path="/analytics" element={<Navigate to="/progress" replace />} />
+              {/* Helpful Aliases */}
+              <Route path="/today" element={<Navigate to="/" replace />} />
+              <Route path="/inbox" element={<Navigate to="/tasks" replace />} />
+              <Route path="/projects" element={<Navigate to="/tasks" replace />} />
               <Route path="/settings" element={<Navigate to="/profile" replace />} />
+              <Route path="/progress" element={<Navigate to="/analytics" replace />} />
+              <Route path="/explore" element={<Navigate to="/tasks" replace />} />
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />

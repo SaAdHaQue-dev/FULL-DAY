@@ -1,8 +1,7 @@
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Task, TaskPriority, TaskStatus } from '../types';
 import { mockTasks } from './mockData';
 
-const STORAGE_KEY = 'taskora_tasks';
+const STORAGE_KEY = 'taskora_personal_tasks';
 
 function getStoredTasks(): Task[] {
   try {
@@ -21,32 +20,13 @@ function saveStoredTasks(tasks: Task[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   } catch (err) {
-    console.error('Failed to save tasks to local storage:', err);
+    console.error('Failed to save personal tasks:', err);
   }
 }
 
 export const taskService = {
   async getTasks(): Promise<Task[]> {
-    if (!isSupabaseConfigured) {
-      return getStoredTasks();
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select(`
-          *,
-          project:projects(*),
-          labels:task_labels(label:labels(*))
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return (data || []) as unknown as Task[];
-    } catch (err) {
-      console.warn('Supabase fetch failed, falling back to local tasks:', err);
-      return getStoredTasks();
-    }
+    return getStoredTasks();
   },
 
   async createTask(input: {
@@ -57,13 +37,18 @@ export const taskService = {
     due_at?: string | null;
     planned_for?: string | null;
     project_id?: string | null;
+    color?: 'purple' | 'pink' | 'yellow' | 'sky' | 'white';
+    time_slot?: string;
   }): Promise<Task> {
+    const palette: Array<'purple' | 'pink' | 'yellow' | 'sky'> = ['purple', 'pink', 'yellow', 'sky'];
+    const chosenColor = input.color || palette[Math.floor(Math.random() * palette.length)];
+
     const newTask: Task = {
       id: `task-${Date.now()}`,
-      owner_id: 'usr-1001',
+      owner_id: 'personal-user',
       workspace_id: null,
       project_id: input.project_id || null,
-      assignee_id: 'usr-1001',
+      assignee_id: 'personal-user',
       title: input.title,
       description: input.description || null,
       status: input.status || 'todo',
@@ -74,80 +59,29 @@ export const taskService = {
       recurrence_rule: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      color: chosenColor,
+      time_slot: input.time_slot || '11:00 - 12:00',
     };
 
-    if (!isSupabaseConfigured) {
-      const current = getStoredTasks();
-      const updated = [newTask, ...current];
-      saveStoredTasks(updated);
-      return newTask;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert({
-          title: newTask.title,
-          description: newTask.description,
-          priority: newTask.priority,
-          status: newTask.status,
-          due_at: newTask.due_at,
-          planned_for: newTask.planned_for,
-          project_id: newTask.project_id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Task;
-    } catch (err) {
-      console.warn('Supabase create failed, saving locally:', err);
-      const current = getStoredTasks();
-      saveStoredTasks([newTask, ...current]);
-      return newTask;
-    }
+    const current = getStoredTasks();
+    const updated = [newTask, ...current];
+    saveStoredTasks(updated);
+    return newTask;
   },
 
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
-    if (!isSupabaseConfigured) {
-      const current = getStoredTasks();
-      const index = current.findIndex((t) => t.id === id);
-      if (index === -1) throw new Error('Task not found');
-      
-      const updatedTask = {
-        ...current[index],
-        ...updates,
-        updated_at: new Date().toISOString(),
-      };
-      current[index] = updatedTask;
-      saveStoredTasks(current);
-      return updatedTask;
-    }
+    const current = getStoredTasks();
+    const index = current.findIndex((t) => t.id === id);
+    if (index === -1) throw new Error('Task not found');
 
-    try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Task;
-    } catch (err) {
-      console.warn('Supabase update failed, updating locally:', err);
-      const current = getStoredTasks();
-      const index = current.findIndex((t) => t.id === id);
-      if (index !== -1) {
-        current[index] = { ...current[index], ...updates };
-        saveStoredTasks(current);
-        return current[index];
-      }
-      throw err;
-    }
+    const updatedTask: Task = {
+      ...current[index],
+      ...updates,
+      updated_at: new Date().toISOString(),
+    };
+    current[index] = updatedTask;
+    saveStoredTasks(current);
+    return updatedTask;
   },
 
   async toggleTaskStatus(id: string, currentStatus: TaskStatus): Promise<Task> {
@@ -162,20 +96,30 @@ export const taskService = {
   },
 
   async deleteTask(id: string): Promise<void> {
-    if (!isSupabaseConfigured) {
-      const current = getStoredTasks();
-      const updated = current.filter((t) => t.id !== id);
-      saveStoredTasks(updated);
-      return;
-    }
+    const current = getStoredTasks();
+    const updated = current.filter((t) => t.id !== id);
+    saveStoredTasks(updated);
+  },
 
+  exportBackup(): string {
+    const tasks = getStoredTasks();
+    return JSON.stringify({
+      version: '1.0',
+      exported_at: new Date().toISOString(),
+      tasks,
+    }, null, 2);
+  },
+
+  importBackup(jsonString: string): boolean {
     try {
-      const { error } = await supabase.from('tasks').delete().eq('id', id);
-      if (error) throw error;
-    } catch (err) {
-      console.warn('Supabase delete failed, deleting locally:', err);
-      const current = getStoredTasks();
-      saveStoredTasks(current.filter((t) => t.id !== id));
+      const parsed = JSON.parse(jsonString);
+      if (Array.isArray(parsed.tasks)) {
+        saveStoredTasks(parsed.tasks);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
     }
   },
 };

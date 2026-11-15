@@ -15,8 +15,6 @@ import { ProjectsPage } from './pages/ProjectsPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { SettingsPage } from './pages/SettingsPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 
 export function App() {
   return (
@@ -25,11 +23,11 @@ export function App() {
         <TaskProvider>
           <BrowserRouter>
             <Routes>
-              {/* Auth Routes */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+              {/* Personal Web App: All routes are instantly unlocked with zero sign-in friction */}
+              <Route path="/login" element={<Navigate to="/" replace />} />
+              <Route path="/register" element={<Navigate to="/" replace />} />
 
-              {/* Application Protected Routes wrapped in AppShell */}
+              {/* Core Application Views wrapped in AppShell */}
               <Route
                 path="/"
                 element={

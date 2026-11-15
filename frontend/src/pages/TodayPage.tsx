@@ -30,13 +30,13 @@ export const TodayPage: React.FC = () => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <CalendarDays className="h-6 w-6 text-amber-500" />
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Today</h1>
-            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+            <CalendarDays className="h-6 w-6 text-[#FFAE33]" />
+            <h1 className="text-2xl font-black tracking-tight text-[#18171E] dark:text-white">Today</h1>
+            <span className="rounded-full bg-[#FFAE33]/15 px-3 py-0.5 text-xs font-bold text-[#D96B27]">
               {todayTasks.length} due
             </span>
           </div>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-xs font-medium text-[#8E8B99]">
             {format(new Date(), 'EEEE, MMMM d')} • What you're getting done today.
           </p>
         </div>
@@ -44,16 +44,16 @@ export const TodayPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsAIModalOpen(true)}
-            className="flex items-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50/70 px-3.5 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 dark:border-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-300 transition-colors"
+            className="flex items-center gap-2 rounded-full border border-[#7065F0]/20 bg-[#F2EDFF] px-4 py-2 text-xs font-bold text-[#7065F0] hover:bg-[#EAE4FE] dark:bg-[#7065F0]/20 dark:text-purple-300 transition-colors"
           >
             <Sparkles className="h-4 w-4" />
             <span>AI Plan</span>
           </button>
           <button
             onClick={() => setIsQuickAddOpen(true)}
-            className="flex items-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
+            className="flex items-center gap-2 rounded-full bg-[#7065F0] px-5 py-2 text-xs font-extrabold text-white shadow-md shadow-[#7065F0]/25 hover:bg-[#6055E8] active:scale-95 transition-all"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 stroke-[3]" />
             <span>Add Task</span>
           </button>
         </div>

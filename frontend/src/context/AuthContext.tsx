@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Profile } from '../types';
 import { mockProfile } from '../services/mockData';
 
+const PROFILE_STORAGE_KEY = 'taskora_personal_profile';
+
 interface AuthContextType {
-  user: { id: string; email: string } | null;
-  profile: Profile | null;
+  user: { id: string; email: string };
+  profile: Profile;
   loading: boolean;
+  updateProfile: (updates: Partial<Profile>) => void;
   signIn: (email: string) => Promise<void>;
   signUp: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -15,90 +17,50 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (!isSupabaseConfigured) {
-      // Demo/local development default user
-      setUser({ id: mockProfile.id, email: 'alex@taskora.app' });
-      setProfile(mockProfile);
-      setLoading(false);
-      return;
-    }
-
-    // Check active session in Supabase
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email || '' });
-        fetchProfile(session.user.id);
-      } else {
-        setUser(null);
-        setProfile(null);
-        setLoading(false);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email || '' });
-        fetchProfile(session.user.id);
-      } else {
-        setUser(null);
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  async function fetchProfile(userId: string) {
+  const [profile, setProfile] = useState<Profile>(() => {
     try {
-      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-      if (data) {
-        setProfile(data as Profile);
-      }
+      const stored = localStorage.getItem(PROFILE_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {
+      // fallback
+    }
+    return {
+      ...mockProfile,
+      display_name: 'Saad',
+    };
+  });
+
+  const [user] = useState<{ id: string; email: string }>({
+    id: profile.id,
+    email: 'saad@personal.app',
+  });
+
+  const updateProfile = (updates: Partial<Profile>) => {
+    const updated = { ...profile, ...updates, updated_at: new Date().toISOString() };
+    setProfile(updated);
+    try {
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(updated));
     } catch (err) {
-      console.warn('Failed to fetch profile:', err);
-    } finally {
-      setLoading(false);
+      console.error('Failed to save profile:', err);
     }
-  }
-
-  const signIn = async (email: string) => {
-    if (!isSupabaseConfigured) {
-      setUser({ id: mockProfile.id, email });
-      setProfile({ ...mockProfile, display_name: email.split('@')[0] });
-      return;
-    }
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) throw error;
   };
 
-  const signUp = async (email: string) => {
-    if (!isSupabaseConfigured) {
-      setUser({ id: mockProfile.id, email });
-      setProfile({ ...mockProfile, display_name: email.split('@')[0] });
-      return;
-    }
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) throw error;
-  };
-
-  const signOut = async () => {
-    if (isSupabaseConfigured) {
-      await supabase.auth.signOut();
-    }
-    setUser(null);
-    setProfile(null);
-  };
+  const signIn = async () => {};
+  const signUp = async () => {};
+  const signOut = async () => {};
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        loading: false,
+        updateProfile,
+        signIn,
+        signUp,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

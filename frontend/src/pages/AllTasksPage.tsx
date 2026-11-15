@@ -51,28 +51,28 @@ export const AllTasksPage: React.FC = () => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <ListTodo className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">All Tasks</h1>
-            <span className="rounded-full bg-slate-200/70 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            <ListTodo className="h-6 w-6 text-[#7065F0]" />
+            <h1 className="text-2xl font-black tracking-tight text-[#18171E] dark:text-white">All Tasks</h1>
+            <span className="rounded-full bg-[#7065F0]/15 px-3 py-0.5 text-xs font-bold text-[#7065F0]">
               {filteredTasks.length}
             </span>
           </div>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-xs font-medium text-[#8E8B99]">
             A unified view of everything across your personal workload and projects.
           </p>
         </div>
 
         <button
           onClick={() => setIsQuickAddOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 transition-colors"
+          className="flex items-center gap-2 rounded-full bg-[#7065F0] px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-[#7065F0]/25 hover:bg-[#6055E8] active:scale-95 transition-all"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-4 w-4 stroke-[3]" />
           <span>Add Task</span>
         </button>
       </div>
 
       {/* Filter and Sort Toolbar */}
-      <div className="flex flex-wrap items-center gap-2.5 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-2xs dark:border-slate-800 dark:bg-slate-900 text-xs">
+      <div className="flex flex-wrap items-center gap-2.5 rounded-[24px] border border-[#F0EEF6] bg-white p-3.5 shadow-sm dark:border-[#292833] dark:bg-[#1C1B24] text-xs">
         <div className="flex items-center gap-1.5 text-slate-400 font-medium pl-1">
           <Filter className="h-3.5 w-3.5" />
           <span>Filters:</span>

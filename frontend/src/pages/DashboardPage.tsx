@@ -12,22 +12,28 @@ import {
   Smartphone,
   Layers,
   Calendar as CalendarIcon,
-  CheckCircle2,
+  Check,
   ListTodo,
+  Flame,
 } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
-import { mockProfile, mockTeamMembers } from '../services/mockData';
+import { useAuth } from '../context/AuthContext';
+import { mockTeamMembers } from '../services/mockData';
 import { PlanDetailModal } from '../components/tasks/PlanDetailModal';
 import { WeatherWidget } from '../components/weather/WeatherWidget';
+import { ProductivityStatsView } from '../components/analytics/ProductivityStatsView';
 
 export const DashboardPage: React.FC = () => {
   const { tasks, setIsQuickAddOpen, setIsAIModalOpen, toggleTaskComplete } = useTasks();
+  const { profile } = useAuth();
 
-  // Active view tab for app experience: 'dashboard' | 'calendar' | 'plan' | 'weather'
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'calendar' | 'plan' | 'weather'>('dashboard');
+  // App tabs: 'dashboard' | 'calendar' | 'plan' | 'stats' | 'weather'
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'calendar' | 'plan' | 'stats' | 'weather'>('dashboard');
 
-  // Desktop layout toggle: 'mobile-app' (single focused phone card) or 'tri-view' (all 3 screens side-by-side)
-  const [layoutMode, setLayoutMode] = useState<'tri-view' | 'mobile-app'>('mobile-app');
+  // Desktop view mode: single phone frame vs tri-view
+  const [layoutMode, setLayoutMode] = useState<'tri-view' | 'mobile-app'>(() =>
+    typeof window !== 'undefined' && window.innerWidth >= 1024 ? 'tri-view' : 'mobile-app'
+  );
 
   const [selectedPlanTask, setSelectedPlanTask] = useState<{
     title: string;
@@ -47,39 +53,29 @@ export const DashboardPage: React.FC = () => {
     { dayNum: 24, dayName: 'Sun' },
   ];
 
-  const scheduleItems = [
-    {
-      time: '09:00 AM',
-      taskTime: '09:20-10:45',
-      title: 'Research Plan',
-      assignedTo: 'Wade Warren',
-      assignedAvatar: mockTeamMembers[0].avatar_url,
-      bgColor: 'bg-[#FF5EEA]',
-      textColor: 'text-white',
-      taskId: 'task-2',
-    },
-    {
-      time: '11:00 AM',
-      taskTime: '11:30-12:00',
-      title: 'Team Meeting',
-      description: 'Discussion of tasks for the month',
-      assignedTo: '8 Members',
-      showAvatars: true,
-      bgColor: 'bg-[#FFAE33]',
-      textColor: 'text-[#18171E]',
-      taskId: 'task-3',
-    },
-    {
-      time: '01:00 PM',
-      taskTime: '12:20-02:30',
-      title: 'Design Review on...',
-      assignedTo: 'Leslie Alexander',
-      assignedAvatar: mockTeamMembers[1].avatar_url,
-      bgColor: 'bg-[#54C5FF]',
-      textColor: 'text-[#18171E]',
-      taskId: 'task-4',
-    },
-  ];
+  const pendingTasks = tasks.filter((t) => t.status !== 'completed');
+  const nextTask = pendingTasks[0] || tasks[0] || {
+    id: 'sample',
+    title: 'Healthcare Dashboard UI',
+    description: 'Design team - Core user workflows and component library',
+    time_slot: '10:00 AM - 11:30 AM',
+  };
+
+  const getCardColorClass = (color?: string, idx = 0) => {
+    if (color === 'pink') return 'bg-[#FF5EEA] text-white';
+    if (color === 'yellow') return 'bg-[#FFAE33] text-[#18171E]';
+    if (color === 'sky') return 'bg-[#54C5FF] text-[#18171E]';
+    if (color === 'purple') return 'bg-[#7065F0] text-white';
+    
+    // Cycle between vibrant styles
+    const cycle = [
+      'bg-[#FF5EEA] text-white',
+      'bg-[#FFAE33] text-[#18171E]',
+      'bg-[#54C5FF] text-[#18171E]',
+      'bg-[#7065F0] text-white',
+    ];
+    return cycle[idx % cycle.length];
+  };
 
   const planAgendaItems = [
     {
@@ -106,7 +102,6 @@ export const DashboardPage: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Top Mobile/App Switcher Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 max-w-6xl mx-auto px-2">
-        {/* App Tabs Pill */}
         <div className="flex items-center gap-1.5 rounded-full bg-white/90 dark:bg-[#1C1B24]/90 p-1.5 shadow-sm border border-white/60 dark:border-[#292833]">
           <button
             onClick={() => setActiveTab('dashboard')}
@@ -144,6 +139,18 @@ export const DashboardPage: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setActiveTab('stats')}
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition-all ${
+              activeTab === 'stats'
+                ? 'bg-[#7065F0] text-white shadow-sm'
+                : 'text-[#8E8B99] hover:text-[#18171E] dark:hover:text-white'
+            }`}
+          >
+            <Flame className="h-3.5 w-3.5 text-[#FFAE33]" />
+            <span>Focus & Stats</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('weather')}
             className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition-all ${
               activeTab === 'weather'
@@ -160,7 +167,7 @@ export const DashboardPage: React.FC = () => {
         <div className="hidden lg:flex items-center gap-2">
           <button
             onClick={() => setLayoutMode(layoutMode === 'mobile-app' ? 'tri-view' : 'mobile-app')}
-            className="flex items-center gap-2 rounded-full bg-white/90 dark:bg-[#1C1B24]/90 px-4 py-2 text-xs font-bold text-[#18171E] dark:text-white shadow-xs border border-white/60 dark:border-[#292833] hover:bg-white transition-all"
+            className="flex items-center gap-2 rounded-full bg-white/90 dark:bg-[#1C1B24]/90 px-4 py-2 text-xs font-bold text-[#18171E] dark:text-white shadow-xs border border-white/60 dark:border-[#292833] hover:bg-white transition-all cursor-pointer"
           >
             {layoutMode === 'mobile-app' ? (
               <>
@@ -177,7 +184,7 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main App Container */}
+      {/* Main Container */}
       {layoutMode === 'mobile-app' ? (
         /* Mobile App Frame View (Centered, ultra-clean phone container) */
         <div className="max-w-md mx-auto">
@@ -188,23 +195,20 @@ export const DashboardPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <img
-                      src={mockProfile.avatar_url || ''}
-                      alt={mockProfile.display_name || ''}
+                      src={profile.avatar_url || ''}
+                      alt={profile.display_name || 'Saad'}
                       className="h-11 w-11 rounded-full object-cover ring-2 ring-white shadow-xs"
                     />
                     <div>
                       <p className="text-xs font-semibold text-[#8E8B99] tracking-wide">Good Morning !</p>
                       <p className="text-base font-extrabold text-[#18171E] dark:text-white tracking-tight">
-                        {mockProfile.display_name}
+                        {profile.display_name}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* Compact Weather Pill */}
                     <WeatherWidget compact={true} />
-
-                    {/* Notification Bell */}
                     <button
                       type="button"
                       aria-label="Notifications"
@@ -219,7 +223,7 @@ export const DashboardPage: React.FC = () => {
                 {/* Big Headline */}
                 <div className="mt-8 mb-6">
                   <h1 className="text-3xl font-normal text-[#18171E] dark:text-white leading-[1.2]">
-                    You have {tasks.filter((t) => t.status !== 'completed').length || 3}
+                    You have {pendingTasks.length}
                     <br />
                     <span className="font-extrabold text-[#18171E] dark:text-white">task for today</span>
                   </h1>
@@ -237,7 +241,6 @@ export const DashboardPage: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Members Avatars Row */}
                   <div className="flex items-center gap-2 overflow-x-auto py-1">
                     {mockTeamMembers.slice(0, 6).map((m) => (
                       <img
@@ -250,7 +253,7 @@ export const DashboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Next Task Hero Card */}
+                {/* Next Task Hero Card (Dynamically bound to real next task!) */}
                 <div className="mt-7">
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base font-extrabold text-[#18171E] dark:text-white">Next Task</h2>
@@ -268,11 +271,11 @@ export const DashboardPage: React.FC = () => {
                       <div className="flex items-start justify-between">
                         <div>
                           <h3 className="text-lg font-extrabold text-white leading-tight">
-                            Healthcare
-                            <br />
-                            Dashboard UI
+                            {nextTask.title}
                           </h3>
-                          <p className="text-xs text-white/80 font-medium mt-1">Design team</p>
+                          <p className="text-xs text-white/80 font-medium mt-1">
+                            {nextTask.description || 'Personal priority task'}
+                          </p>
                         </div>
 
                         <div className="flex -space-x-2">
@@ -305,9 +308,9 @@ export const DashboardPage: React.FC = () => {
                         <button
                           onClick={() =>
                             setSelectedPlanTask({
-                              title: 'Healthcare Dashboard UI',
-                              description: 'Design team - Core user workflows and component library',
-                              timeSlot: '10:00 AM - 11:30 AM',
+                              title: nextTask.title,
+                              description: nextTask.description || 'Focus item for today',
+                              timeSlot: nextTask.time_slot || '10:00 AM - 11:30 AM',
                             })
                           }
                           className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#7065F0] hover:bg-white/95 shadow-lg active:scale-95 transition-all cursor-pointer"
@@ -324,7 +327,6 @@ export const DashboardPage: React.FC = () => {
 
           {activeTab === 'calendar' && (
             <div className="rounded-[40px] bg-white p-7 shadow-2xl dark:bg-[#1C1B24] border border-[#F0EEF6] dark:border-[#292833] min-h-[660px] animate-in fade-in duration-150">
-              {/* Header */}
               <div className="flex items-center justify-between pb-3">
                 <button
                   onClick={() => setActiveTab('dashboard')}
@@ -335,8 +337,11 @@ export const DashboardPage: React.FC = () => {
                 <h2 className="text-base font-extrabold text-[#18171E] dark:text-white tracking-tight">
                   Calendar
                 </h2>
-                <button className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F3F8] text-[#18171E] dark:bg-[#292833] dark:text-white">
-                  <MoreVertical className="h-4 w-4" />
+                <button
+                  onClick={() => setIsQuickAddOpen(true)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#7065F0] text-white"
+                >
+                  <Plus className="h-4 w-4 stroke-[3]" />
                 </button>
               </div>
 
@@ -372,37 +377,59 @@ export const DashboardPage: React.FC = () => {
                 })}
               </div>
 
-              {/* Chronological Schedule Rail */}
+              {/* Real Tasks Schedule Rail */}
               <div className="mt-6 space-y-4">
-                {scheduleItems.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-16 shrink-0 pt-1 text-right">
-                      <span className="text-[11px] font-semibold text-[#8E8B99]">{item.time}</span>
-                    </div>
+                {tasks.slice(0, 5).map((t, index) => {
+                  const cardColorClass = getCardColorClass(t.color, index);
+                  const isDone = t.status === 'completed';
 
-                    <div
-                      onClick={() =>
-                        setSelectedPlanTask({
-                          title: item.title,
-                          description: item.description || 'Assigned task for the day',
-                          timeSlot: item.taskTime,
-                        })
-                      }
-                      className={`flex-1 rounded-[26px] p-4 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-xs ${item.bgColor} ${item.textColor}`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="text-sm font-extrabold leading-snug">{item.title}</h4>
-                          <div className="mt-1 flex items-center gap-1.5 text-xs opacity-90">
-                            <Clock className="h-3 w-3" />
-                            <span>{item.taskTime}</span>
-                          </div>
-                        </div>
-                        <MoreVertical className="h-4 w-4 opacity-75" />
+                  return (
+                    <div key={t.id} className="flex items-start gap-3">
+                      <div className="w-16 shrink-0 pt-2 text-right">
+                        <span className="text-[11px] font-semibold text-[#8E8B99]">
+                          {index === 0 ? '09:00 AM' : index === 1 ? '11:00 AM' : index === 2 ? '01:00 PM' : '03:00 PM'}
+                        </span>
                       </div>
 
-                      <div className="mt-3 flex items-center justify-between pt-2 border-t border-black/10">
-                        {item.showAvatars ? (
+                      <div
+                        onClick={() =>
+                          setSelectedPlanTask({
+                            title: t.title,
+                            description: t.description || 'Personal focus task',
+                            timeSlot: t.time_slot || '11:00 - 12:00',
+                          })
+                        }
+                        className={`flex-1 rounded-[26px] p-4 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-xs ${cardColorClass} ${
+                          isDone && 'opacity-60 line-through'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-2.5">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleTaskComplete(t.id);
+                              }}
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 mt-0.5 transition-all ${
+                                isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-current/60 hover:border-current'
+                              }`}
+                            >
+                              {isDone && <Check className="h-3 w-3 stroke-[3]" />}
+                            </button>
+
+                            <div>
+                              <h4 className="text-sm font-extrabold leading-snug">{t.title}</h4>
+                              <div className="mt-1 flex items-center gap-1.5 text-xs opacity-90 font-medium">
+                                <Clock className="h-3 w-3" />
+                                <span>{t.time_slot || '11:30 - 12:00'}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <MoreVertical className="h-4 w-4 opacity-75" />
+                        </div>
+
+                        <div className="mt-3 flex items-center justify-between pt-2 border-t border-black/10">
                           <div className="flex items-center -space-x-1.5">
                             {mockTeamMembers.slice(0, 3).map((m) => (
                               <img
@@ -416,23 +443,11 @@ export const DashboardPage: React.FC = () => {
                               +8
                             </span>
                           </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] opacity-80">Assigned to</span>
-                            {item.assignedAvatar && (
-                              <img
-                                src={item.assignedAvatar}
-                                alt=""
-                                className="h-5 w-5 rounded-full object-cover"
-                              />
-                            )}
-                            <span className="text-xs font-bold">{item.assignedTo}</span>
-                          </div>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -510,6 +525,12 @@ export const DashboardPage: React.FC = () => {
             </div>
           )}
 
+          {activeTab === 'stats' && (
+            <div className="animate-in fade-in duration-150">
+              <ProductivityStatsView />
+            </div>
+          )}
+
           {activeTab === 'weather' && (
             <div className="rounded-[40px] bg-white p-6 shadow-2xl dark:bg-[#1C1B24] border border-[#F0EEF6] dark:border-[#292833] min-h-[660px] animate-in fade-in duration-150 space-y-4">
               <div className="flex items-center justify-between pb-2">
@@ -538,14 +559,14 @@ export const DashboardPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
-                    src={mockProfile.avatar_url || ''}
-                    alt={mockProfile.display_name || ''}
+                    src={profile.avatar_url || ''}
+                    alt={profile.display_name || 'Saad'}
                     className="h-11 w-11 rounded-full object-cover ring-2 ring-white shadow-xs"
                   />
                   <div>
                     <p className="text-xs font-semibold text-[#8E8B99] tracking-wide">Good Morning !</p>
                     <p className="text-base font-extrabold text-[#18171E] dark:text-white tracking-tight">
-                      {mockProfile.display_name}
+                      {profile.display_name}
                     </p>
                   </div>
                 </div>
@@ -564,7 +585,7 @@ export const DashboardPage: React.FC = () => {
 
               <div className="mt-8 mb-6">
                 <h1 className="text-3xl font-normal text-[#18171E] dark:text-white leading-[1.2]">
-                  You have {tasks.filter((t) => t.status !== 'completed').length || 3}
+                  You have {pendingTasks.length}
                   <br />
                   <span className="font-extrabold text-[#18171E] dark:text-white">task for today</span>
                 </h1>
@@ -610,11 +631,11 @@ export const DashboardPage: React.FC = () => {
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="text-lg font-extrabold text-white leading-tight">
-                          Healthcare
-                          <br />
-                          Dashboard UI
+                          {nextTask.title}
                         </h3>
-                        <p className="text-xs text-white/80 font-medium mt-1">Design team</p>
+                        <p className="text-xs text-white/80 font-medium mt-1">
+                          {nextTask.description || 'Personal focus task'}
+                        </p>
                       </div>
 
                       <div className="flex -space-x-2">
@@ -647,9 +668,9 @@ export const DashboardPage: React.FC = () => {
                       <button
                         onClick={() =>
                           setSelectedPlanTask({
-                            title: 'Healthcare Dashboard UI',
-                            description: 'Design team - Core user workflows and component library',
-                            timeSlot: '10:00 AM - 11:30 AM',
+                            title: nextTask.title,
+                            description: nextTask.description || 'Personal focus task',
+                            timeSlot: nextTask.time_slot || '10:00 AM - 11:30 AM',
                           })
                         }
                         className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#7065F0] hover:bg-white/95 shadow-lg active:scale-95 transition-all cursor-pointer"
@@ -715,35 +736,42 @@ export const DashboardPage: React.FC = () => {
               </div>
 
               <div className="mt-6 space-y-4">
-                {scheduleItems.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-16 shrink-0 pt-1 text-right">
-                      <span className="text-[11px] font-semibold text-[#8E8B99]">{item.time}</span>
-                    </div>
+                {tasks.slice(0, 4).map((t, index) => {
+                  const cardColorClass = getCardColorClass(t.color, index);
+                  const isDone = t.status === 'completed';
 
-                    <div
-                      onClick={() =>
-                        setSelectedPlanTask({
-                          title: item.title,
-                          description: item.description || 'Assigned task for the day',
-                          timeSlot: item.taskTime,
-                        })
-                      }
-                      className={`flex-1 rounded-[26px] p-4 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-xs ${item.bgColor} ${item.textColor}`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="text-sm font-extrabold leading-snug">{item.title}</h4>
-                          <div className="mt-1 flex items-center gap-1.5 text-xs opacity-90">
-                            <Clock className="h-3 w-3" />
-                            <span>{item.taskTime}</span>
-                          </div>
-                        </div>
-                        <MoreVertical className="h-4 w-4 opacity-75" />
+                  return (
+                    <div key={t.id} className="flex items-start gap-3">
+                      <div className="w-16 shrink-0 pt-1 text-right">
+                        <span className="text-[11px] font-semibold text-[#8E8B99]">
+                          {index === 0 ? '09:00 AM' : index === 1 ? '11:00 AM' : index === 2 ? '01:00 PM' : '02:30 PM'}
+                        </span>
                       </div>
 
-                      <div className="mt-3 flex items-center justify-between pt-2 border-t border-black/10">
-                        {item.showAvatars ? (
+                      <div
+                        onClick={() =>
+                          setSelectedPlanTask({
+                            title: t.title,
+                            description: t.description || 'Assigned task for the day',
+                            timeSlot: t.time_slot || '11:30 - 12:00',
+                          })
+                        }
+                        className={`flex-1 rounded-[26px] p-4 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-xs ${cardColorClass} ${
+                          isDone && 'opacity-60 line-through'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="text-sm font-extrabold leading-snug">{t.title}</h4>
+                            <div className="mt-1 flex items-center gap-1.5 text-xs opacity-90">
+                              <Clock className="h-3 w-3" />
+                              <span>{t.time_slot || '11:30 - 12:00'}</span>
+                            </div>
+                          </div>
+                          <MoreVertical className="h-4 w-4 opacity-75" />
+                        </div>
+
+                        <div className="mt-3 flex items-center justify-between pt-2 border-t border-black/10">
                           <div className="flex items-center -space-x-1.5">
                             {mockTeamMembers.slice(0, 3).map((m) => (
                               <img
@@ -757,23 +785,11 @@ export const DashboardPage: React.FC = () => {
                               +8
                             </span>
                           </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] opacity-80">Assigned to</span>
-                            {item.assignedAvatar && (
-                              <img
-                                src={item.assignedAvatar}
-                                alt=""
-                                className="h-5 w-5 rounded-full object-cover"
-                              />
-                            )}
-                            <span className="text-xs font-bold">{item.assignedTo}</span>
-                          </div>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -855,7 +871,7 @@ export const DashboardPage: React.FC = () => {
         </div>
       )}
 
-      {/* Plan Detail Modal for clicks */}
+      {/* Plan Detail Modal */}
       {selectedPlanTask && (
         <PlanDetailModal
           isOpen={Boolean(selectedPlanTask)}

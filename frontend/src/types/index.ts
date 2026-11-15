@@ -72,6 +72,9 @@ export interface Task {
   project?: Project;
   labels?: Label[];
   assignee?: Profile;
+  color?: 'purple' | 'pink' | 'yellow' | 'sky' | 'white';
+  time_slot?: string;
+  assignees?: Profile[];
 }
 
 export interface TaskComment {

@@ -1,84 +1,104 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Calendar, BarChart3, ListTodo, User } from 'lucide-react';
+import { Home, Compass, Zap, BarChart2, User } from 'lucide-react';
 
 export const BottomDock: React.FC = () => {
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
-      <div className="flex items-center gap-1.5 rounded-full bg-[#18171E] px-3.5 py-2 shadow-2xl backdrop-blur-md border border-white/10">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#EDE8F5] shadow-[0_-4px_20px_rgba(0,0,0,0.03)] pb-safe">
+      <div className="max-w-md mx-auto flex items-center justify-around h-16 px-3">
         {/* Home */}
         <NavLink
           to="/"
-          title="Today's Dashboard"
           className={({ isActive }) =>
-            `flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
-              isActive
-                ? 'bg-[#7065F0] text-white shadow-md shadow-[#7065F0]/30'
-                : 'text-[#8E8B99] hover:text-white'
+            `flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              isActive ? 'text-[#6C5CE7]' : 'text-[#A09CB0] hover:text-[#6C5CE7]'
             }`
           }
         >
-          <Home className="h-5 w-5" />
+          {({ isActive }) => (
+            <>
+              <Home className={`h-5 w-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+              <span className={`text-[10px] mt-1 ${isActive ? 'font-black' : 'font-semibold'}`}>
+                Home
+              </span>
+            </>
+          )}
         </NavLink>
 
-        {/* Calendar */}
+        {/* Explore */}
         <NavLink
-          to="/calendar"
-          title="Calendar & Timeline"
+          to="/explore"
           className={({ isActive }) =>
-            `flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
-              isActive
-                ? 'bg-[#7065F0] text-white shadow-md shadow-[#7065F0]/30'
-                : 'text-[#8E8B99] hover:text-white'
+            `flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              isActive ? 'text-[#6C5CE7]' : 'text-[#A09CB0] hover:text-[#6C5CE7]'
             }`
           }
         >
-          <Calendar className="h-5 w-5" />
+          {({ isActive }) => (
+            <>
+              <Compass className={`h-5 w-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+              <span className={`text-[10px] mt-1 ${isActive ? 'font-black' : 'font-semibold'}`}>
+                Explore
+              </span>
+            </>
+          )}
         </NavLink>
 
-        {/* Productivity Analytics & Habits */}
+        {/* Practice / Focus */}
         <NavLink
-          to="/analytics"
-          title="Productivity & Focus Stats"
+          to="/practice"
           className={({ isActive }) =>
-            `flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
-              isActive
-                ? 'bg-[#7065F0] text-white shadow-md shadow-[#7065F0]/30'
-                : 'text-[#8E8B99] hover:text-white'
+            `flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              isActive ? 'text-[#6C5CE7]' : 'text-[#A09CB0] hover:text-[#6C5CE7]'
             }`
           }
         >
-          <BarChart3 className="h-5 w-5" />
+          {({ isActive }) => (
+            <>
+              <Zap className={`h-5 w-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+              <span className={`text-[10px] mt-1 ${isActive ? 'font-black' : 'font-semibold'}`}>
+                Practice
+              </span>
+            </>
+          )}
         </NavLink>
 
-        {/* Tasks List */}
+        {/* Progress / Stats */}
         <NavLink
-          to="/tasks"
-          title="All Tasks & Projects"
+          to="/progress"
           className={({ isActive }) =>
-            `flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
-              isActive
-                ? 'bg-[#7065F0] text-white shadow-md shadow-[#7065F0]/30'
-                : 'text-[#8E8B99] hover:text-white'
+            `flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              isActive ? 'text-[#6C5CE7]' : 'text-[#A09CB0] hover:text-[#6C5CE7]'
             }`
           }
         >
-          <ListTodo className="h-5 w-5" />
+          {({ isActive }) => (
+            <>
+              <BarChart2 className={`h-5 w-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+              <span className={`text-[10px] mt-1 ${isActive ? 'font-black' : 'font-semibold'}`}>
+                Progress
+              </span>
+            </>
+          )}
         </NavLink>
 
-        {/* Settings & Profile */}
+        {/* Profile */}
         <NavLink
-          to="/settings"
-          title="Settings & Personal Workstation"
+          to="/profile"
           className={({ isActive }) =>
-            `flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
-              isActive
-                ? 'bg-[#7065F0] text-white shadow-md shadow-[#7065F0]/30'
-                : 'text-[#8E8B99] hover:text-white'
+            `flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              isActive ? 'text-[#6C5CE7]' : 'text-[#A09CB0] hover:text-[#6C5CE7]'
             }`
           }
         >
-          <User className="h-5 w-5" />
+          {({ isActive }) => (
+            <>
+              <User className={`h-5 w-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
+              <span className={`text-[10px] mt-1 ${isActive ? 'font-black' : 'font-semibold'}`}>
+                Profile
+              </span>
+            </>
+          )}
         </NavLink>
       </div>
     </nav>

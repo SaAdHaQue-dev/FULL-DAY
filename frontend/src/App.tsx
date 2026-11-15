@@ -6,15 +6,10 @@ import { TaskProvider } from './context/TaskContext';
 import { AppShell } from './components/layout/AppShell';
 
 import { DashboardPage } from './pages/DashboardPage';
-import { InboxPage } from './pages/InboxPage';
-import { TodayPage } from './pages/TodayPage';
-import { UpcomingPage } from './pages/UpcomingPage';
-import { AllTasksPage } from './pages/AllTasksPage';
-import { CompletedPage } from './pages/CompletedPage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { CalendarPage } from './pages/CalendarPage';
-import { AnalyticsPage } from './pages/AnalyticsPage';
-import { SettingsPage } from './pages/SettingsPage';
+import { ExplorePage } from './pages/ExplorePage';
+import { PracticePage } from './pages/PracticePage';
+import { ProgressPage } from './pages/ProgressPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 export function App() {
   return (
@@ -23,11 +18,11 @@ export function App() {
         <TaskProvider>
           <BrowserRouter>
             <Routes>
-              {/* Personal Web App: All routes are instantly unlocked with zero sign-in friction */}
+              {/* Zero Sign-in Barrier */}
               <Route path="/login" element={<Navigate to="/" replace />} />
               <Route path="/register" element={<Navigate to="/" replace />} />
 
-              {/* Core Application Views wrapped in AppShell */}
+              {/* 5 Primary App Shell Views matching image */}
               <Route
                 path="/"
                 element={
@@ -37,79 +32,45 @@ export function App() {
                 }
               />
               <Route
-                path="/inbox"
+                path="/explore"
                 element={
                   <AppShell>
-                    <InboxPage />
+                    <ExplorePage />
                   </AppShell>
                 }
               />
               <Route
-                path="/today"
+                path="/practice"
                 element={
                   <AppShell>
-                    <TodayPage />
+                    <PracticePage />
                   </AppShell>
                 }
               />
               <Route
-                path="/upcoming"
+                path="/progress"
                 element={
                   <AppShell>
-                    <UpcomingPage />
+                    <ProgressPage />
                   </AppShell>
                 }
               />
               <Route
-                path="/tasks"
+                path="/profile"
                 element={
                   <AppShell>
-                    <AllTasksPage />
-                  </AppShell>
-                }
-              />
-              <Route
-                path="/completed"
-                element={
-                  <AppShell>
-                    <CompletedPage />
-                  </AppShell>
-                }
-              />
-              <Route
-                path="/projects"
-                element={
-                  <AppShell>
-                    <ProjectsPage />
-                  </AppShell>
-                }
-              />
-              <Route
-                path="/calendar"
-                element={
-                  <AppShell>
-                    <CalendarPage />
-                  </AppShell>
-                }
-              />
-              <Route
-                path="/analytics"
-                element={
-                  <AppShell>
-                    <AnalyticsPage />
-                  </AppShell>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <AppShell>
-                    <SettingsPage />
+                    <ProfilePage />
                   </AppShell>
                 }
               />
 
-              {/* Fallback route */}
+              {/* Aliases for quick compatibility */}
+              <Route path="/tasks" element={<Navigate to="/explore" replace />} />
+              <Route path="/calendar" element={<Navigate to="/practice" replace />} />
+              <Route path="/analytics" element={<Navigate to="/progress" replace />} />
+              <Route path="/settings" element={<Navigate to="/profile" replace />} />
+
+              {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>

@@ -42,10 +42,10 @@ export const QuickAddModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="w-full max-w-lg rounded-[36px] bg-white p-7 shadow-2xl dark:bg-[#1C1B24] border border-[#F0EEF6] dark:border-[#292833] overflow-hidden">
+      <div className="w-full max-w-lg rounded-[28px] bg-white p-6 shadow-2xl border border-[#EDE8F5] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#F0EEF6] dark:border-[#292833]">
-          <h2 className="text-xl font-extrabold text-[#18171E] dark:text-white">Create New Task</h2>
+        <div className="flex items-center justify-between pb-4 border-b border-[#EDE8F5]">
+          <h2 className="text-lg font-black text-[#1E1B2E]">Create New Task or Word</h2>
           <button
             onClick={() => setIsQuickAddOpen(false)}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F3F8] text-[#18171E] hover:bg-[#EAE8F2] dark:bg-[#292833] dark:text-white"
@@ -139,7 +139,7 @@ export const QuickAddModal: React.FC = () => {
             <button
               type="submit"
               disabled={submitting || !title.trim()}
-              className="rounded-full bg-[#7065F0] px-6 py-2.5 text-xs font-extrabold text-white shadow-md shadow-[#7065F0]/25 hover:bg-[#6055E8] disabled:opacity-50 transition-all"
+              className="rounded-full bg-[#6C5CE7] px-6 py-2.5 text-xs font-black text-white shadow-md shadow-[#6C5CE7]/25 hover:bg-[#5B4BC4] disabled:opacity-50 transition-all"
             >
               {submitting ? 'Creating...' : 'Create Task'}
             </button>

@@ -15,7 +15,6 @@ import {
 import { useTasks } from '../../context/TaskContext';
 import { useTheme } from '../../context/ThemeContext';
 import { mockNotifications } from '../../services/mockData';
-import { cn } from '../../lib/utils';
 
 interface TopBarProps {
   onToggleSidebar: () => void;

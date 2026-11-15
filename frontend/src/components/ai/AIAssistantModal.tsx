@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, X, Check, Calendar, ArrowRight, BrainCircuit, ListOrdered } from 'lucide-react';
+import { Sparkles, X, Check, Calendar, BrainCircuit, ListOrdered } from 'lucide-react';
 import { useTasks } from '../../context/TaskContext';
 import { aiService, AIParsedTask } from '../../services/aiService';
 import { DailyPlanResult } from '../../types';

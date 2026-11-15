@@ -3,7 +3,7 @@ import { ListTodo, Plus, Filter, ArrowUpDown } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 import { TaskItem } from '../components/tasks/TaskItem';
 import { EmptyState } from '../components/common/EmptyState';
-import { TaskPriority, TaskStatus } from '../types';
+import { TaskPriority } from '../types';
 
 export const AllTasksPage: React.FC = () => {
   const { tasks, projects, setIsQuickAddOpen, filters, setFilters } = useTasks();

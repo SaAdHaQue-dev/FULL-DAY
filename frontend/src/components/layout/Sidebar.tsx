@@ -7,7 +7,6 @@ import {
   CalendarRange,
   CheckCircle2,
   ListTodo,
-  FolderKanban,
   BarChart3,
   Settings,
   Plus,

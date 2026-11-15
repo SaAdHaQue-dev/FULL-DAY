@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Flag, FolderKanban, Check, Trash2, Clock, MessageSquare } from 'lucide-react';
+import { X, Calendar, Flag, FolderKanban, Check, Trash2, Clock } from 'lucide-react';
 import { useTasks } from '../../context/TaskContext';
 import { TaskPriority, TaskStatus } from '../../types';
-import { formatDateTime, getPriorityColor, getStatusBadge } from '../../lib/utils';
+import { formatDateTime, getStatusBadge } from '../../lib/utils';
 import { format, parseISO } from 'date-fns';
 
 export const TaskDetailDrawer: React.FC = () => {
@@ -53,7 +53,6 @@ export const TaskDetailDrawer: React.FC = () => {
     }
   };
 
-  const priorityStyle = getPriorityColor(priority);
   const statusBadge = getStatusBadge(status);
 
   return (

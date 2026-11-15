@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FolderKanban, Plus, CheckCircle2, ListTodo, X } from 'lucide-react';
+import { FolderKanban, Plus, ListTodo, X } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 import { TaskItem } from '../components/tasks/TaskItem';
 import { EmptyState } from '../components/common/EmptyState';

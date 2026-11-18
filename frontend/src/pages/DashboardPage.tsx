@@ -31,6 +31,7 @@ export const DashboardPage: React.FC = () => {
     setIsQuickAddOpen,
     setIsVoiceModalOpen,
     setIsAIModalOpen,
+    setIsTimerOpen,
     toggleTaskComplete,
     createTask,
   } = useTasks();
@@ -186,26 +187,29 @@ export const DashboardPage: React.FC = () => {
 
       {/* Quick Action Navigation Grid (4 Pastel Buttons) */}
       <div className="grid grid-cols-4 gap-2 text-center">
-        {/* Action 1: Today */}
+        {/* Action 1: Tasks */}
         <button
           onClick={() => navigate('/tasks')}
           className="flex flex-col items-center gap-1.5 group cursor-pointer"
         >
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EBF5FF] text-[#339AF0] group-hover:scale-105 active:scale-95 transition-transform shadow-xs">
-            <Calendar className="h-5 w-5 stroke-[2.2]" />
+            <Check className="h-5 w-5 stroke-[2.5]" />
           </div>
           <span className="text-[11px] font-bold text-[#1E1B2E]">Tasks ({pendingTasks.length})</span>
         </button>
 
-        {/* Action 2: Calendar Timeline */}
+        {/* Action 2: Focus Timer with Ambient Sound */}
         <button
-          onClick={() => navigate('/calendar')}
+          onClick={() => setIsTimerOpen(true)}
           className="flex flex-col items-center gap-1.5 group cursor-pointer"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFEBF3] text-[#FF5E8E] group-hover:scale-105 active:scale-95 transition-transform shadow-xs">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F0EFFF] text-[#6C5CE7] group-hover:scale-105 active:scale-95 transition-transform shadow-xs relative">
             <Clock className="h-5 w-5 stroke-[2.2]" />
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#FFAE33] text-[9px] font-black text-white shadow-2xs">
+              🎵
+            </span>
           </div>
-          <span className="text-[11px] font-bold text-[#1E1B2E]">Calendar</span>
+          <span className="text-[11px] font-bold text-[#1E1B2E]">Focus Timer</span>
         </button>
 
         {/* Action 3: Voice Task */}
@@ -219,15 +223,15 @@ export const DashboardPage: React.FC = () => {
           <span className="text-[11px] font-bold text-[#1E1B2E]">Voice Add</span>
         </button>
 
-        {/* Action 4: Analytics */}
+        {/* Action 4: AI Plan */}
         <button
-          onClick={() => navigate('/analytics')}
+          onClick={() => setIsAIModalOpen(true)}
           className="flex flex-col items-center gap-1.5 group cursor-pointer"
         >
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF5E5] text-[#FF922B] group-hover:scale-105 active:scale-95 transition-transform shadow-xs">
             <Sparkles className="h-5 w-5 stroke-[2.2]" />
           </div>
-          <span className="text-[11px] font-bold text-[#1E1B2E]">Stats</span>
+          <span className="text-[11px] font-bold text-[#1E1B2E]">AI Plan</span>
         </button>
       </div>
 

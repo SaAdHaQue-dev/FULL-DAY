@@ -4,6 +4,7 @@ import { QuickAddModal } from '../tasks/QuickAddModal';
 import { VoiceModal } from '../common/VoiceModal';
 import { AIAssistantModal } from '../ai/AIAssistantModal';
 import { TaskDetailDrawer } from '../tasks/TaskDetailDrawer';
+import { FocusTimerModal } from '../timer/FocusTimerModal';
 import { useTasks } from '../../context/TaskContext';
 
 interface AppShellProps {
@@ -11,7 +12,7 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
-  const { setIsQuickAddOpen } = useTasks();
+  const { setIsQuickAddOpen, isTimerOpen, setIsTimerOpen } = useTasks();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -36,10 +37,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       {/* Clean White Bottom Navigation Dock */}
       <BottomDock />
 
-      {/* Quick Add & Voice & AI Modals */}
+      {/* Quick Add & Voice & AI & Focus Timer Modals */}
       <QuickAddModal />
       <VoiceModal />
       <AIAssistantModal />
+      <FocusTimerModal isOpen={isTimerOpen} onClose={() => setIsTimerOpen(false)} />
       <TaskDetailDrawer />
     </div>
   );

@@ -22,34 +22,11 @@ import { useTasks } from '../../context/TaskContext';
 import { useAuth } from '../../context/AuthContext';
 
 export const ProductivityStatsView: React.FC = () => {
-  const { tasks, counts } = useTasks();
+  const { tasks, counts, setIsTimerOpen } = useTasks();
   const { profile } = useAuth();
 
   const [timeframe, setTimeframe] = useState<'Week' | 'Month' | 'Quarter'>('Week');
   const [selectedTag, setSelectedTag] = useState<string>('Deep Flow');
-  
-  // Interactive Pomodoro Focus Timer
-  const [timerSeconds, setTimerSeconds] = useState(25 * 60);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [showTimerModal, setShowTimerModal] = useState(false);
-
-  useEffect(() => {
-    let interval: any = null;
-    if (isTimerRunning && timerSeconds > 0) {
-      interval = setInterval(() => {
-        setTimerSeconds((prev) => prev - 1);
-      }, 1000);
-    } else if (timerSeconds === 0) {
-      setIsTimerRunning(false);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, timerSeconds]);
-
-  const formatTimer = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    const remaining = secs % 60;
-    return `${mins.toString().padStart(2, '0')}:${remaining.toString().padStart(2, '0')}`;
-  };
 
   const completedCount = counts.completed || tasks.filter((t) => t.status === 'completed').length;
   const pendingCount = counts.all || tasks.filter((t) => t.status !== 'completed').length;
@@ -178,11 +155,11 @@ export const ProductivityStatsView: React.FC = () => {
 
             <div className="pt-2">
               <button
-                onClick={() => setShowTimerModal(true)}
+                onClick={() => setIsTimerOpen(true)}
                 className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-extrabold text-[#18171E] shadow-sm hover:bg-[#FDFBF7] active:scale-95 transition-all"
               >
                 <Zap className="h-3.5 w-3.5 text-[#FFAE33]" />
-                <span>Start 25m Focus Timer</span>
+                <span>Start Focus Timer with Soundscape</span>
               </button>
             </div>
           </div>
@@ -367,60 +344,6 @@ export const ProductivityStatsView: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Focus Timer Modal */}
-      {showTimerModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-[36px] bg-white p-7 shadow-2xl dark:bg-[#1C1B24] border border-[#F0EEF6] dark:border-[#292833] text-center">
-            <span className="text-3xl">⏱️</span>
-            <h3 className="mt-3 text-xl font-extrabold text-[#18171E] dark:text-white">
-              Deep Work Focus Session
-            </h3>
-            <p className="mt-1 text-xs text-[#8E8B99]">
-              25 minutes of zero notifications and continuous flow.
-            </p>
-
-            <div className="my-6">
-              <span className="text-5xl font-black tracking-tight text-[#18171E] dark:text-white font-mono">
-                {formatTimer(timerSeconds)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-center gap-3">
-              <button
-                onClick={() => setIsTimerRunning(!isTimerRunning)}
-                className={`flex h-12 items-center gap-2 rounded-full px-6 text-xs font-extrabold shadow-md transition-all ${
-                  isTimerRunning
-                    ? 'bg-[#FFAE33] text-[#18171E]'
-                    : 'bg-[#7065F0] text-white'
-                }`}
-              >
-                {isTimerRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                <span>{isTimerRunning ? 'Pause' : 'Start Focus'}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsTimerRunning(false);
-                  setTimerSeconds(25 * 60);
-                }}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F4F3F8] text-[#18171E] dark:bg-[#292833] dark:text-white hover:bg-[#EAE8F2]"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-[#F0EEF6] dark:border-[#292833]">
-              <button
-                onClick={() => setShowTimerModal(false)}
-                className="text-xs font-bold text-[#8E8B99] hover:text-[#18171E] dark:hover:text-white"
-              >
-                Close Window
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

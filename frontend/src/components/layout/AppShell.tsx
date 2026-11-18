@@ -3,6 +3,7 @@ import { BottomDock } from './BottomDock';
 import { QuickAddModal } from '../tasks/QuickAddModal';
 import { VoiceModal } from '../common/VoiceModal';
 import { AIAssistantModal } from '../ai/AIAssistantModal';
+import { IdeaLabModal } from '../idea/IdeaLabModal';
 import { TaskDetailDrawer } from '../tasks/TaskDetailDrawer';
 import { FocusTimerModal } from '../timer/FocusTimerModal';
 import { useTasks } from '../../context/TaskContext';
@@ -37,10 +38,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       {/* Clean White Bottom Navigation Dock */}
       <BottomDock />
 
-      {/* Quick Add & Voice & AI & Focus Timer Modals */}
+      {/* Quick Add & Voice & AI & Idea Lab & Focus Timer Modals */}
       <QuickAddModal />
       <VoiceModal />
       <AIAssistantModal />
+      <IdeaLabModal />
       <FocusTimerModal isOpen={isTimerOpen} onClose={() => setIsTimerOpen(false)} />
       <TaskDetailDrawer />
     </div>

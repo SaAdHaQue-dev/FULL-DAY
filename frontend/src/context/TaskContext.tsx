@@ -21,6 +21,8 @@ interface TaskContextType {
   setIsAIModalOpen: (open: boolean) => void;
   isTimerOpen: boolean;
   setIsTimerOpen: (open: boolean) => void;
+  isIdeaModalOpen: boolean;
+  setIsIdeaModalOpen: (open: boolean) => void;
   createTask: (input: {
     title: string;
     description?: string | null;
@@ -66,6 +68,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState<boolean>(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
   const [isTimerOpen, setIsTimerOpen] = useState<boolean>(false);
+  const [isIdeaModalOpen, setIsIdeaModalOpen] = useState<boolean>(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -197,6 +200,8 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAIModalOpen,
         isTimerOpen,
         setIsTimerOpen,
+        isIdeaModalOpen,
+        setIsIdeaModalOpen,
         createTask,
         updateTask,
         toggleTaskComplete,

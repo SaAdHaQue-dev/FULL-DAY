@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Sparkles, X, Check, Calendar, BrainCircuit, ListOrdered } from 'lucide-react';
+import { Sparkles, X, Check, Calendar, BrainCircuit, ListOrdered, Lightbulb } from 'lucide-react';
 import { useTasks } from '../../context/TaskContext';
 import { aiService, AIParsedTask } from '../../services/aiService';
 import { DailyPlanResult } from '../../types';
 
 export const AIAssistantModal: React.FC = () => {
-  const { isAIModalOpen, setIsAIModalOpen, tasks, createTask } = useTasks();
+  const { isAIModalOpen, setIsAIModalOpen, setIsIdeaModalOpen, tasks, createTask } = useTasks();
   const [activeTab, setActiveTab] = useState<'create' | 'plan'>('create');
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
@@ -96,6 +96,19 @@ export const AIAssistantModal: React.FC = () => {
           >
             <ListOrdered className="h-4 w-4" />
             <span>Smart Daily Planner</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsAIModalOpen(false);
+              setIsIdeaModalOpen(true);
+            }}
+            className="flex items-center gap-1.5 py-3 px-3 text-xs font-black border-b-2 border-transparent text-[#6C5CE7] hover:bg-[#F0EFFF]/60 rounded-t-lg transition-colors ml-auto"
+            title="Open Gemini Idea Lab"
+          >
+            <Lightbulb className="h-4 w-4 text-[#FFAE33]" />
+            <span>Idea Lab & Plan ✨</span>
           </button>
         </div>
 

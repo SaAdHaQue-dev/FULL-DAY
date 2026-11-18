@@ -15,21 +15,36 @@ import {
   Server,
   Database,
   RefreshCw,
+  Lightbulb,
+  Key,
+  ExternalLink,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTasks } from '../context/TaskContext';
 import { taskService } from '../services/taskService';
+import { geminiService } from '../services/geminiService';
 
 export const ProfilePage: React.FC = () => {
   const { profile, updateProfile } = useAuth();
+  const { setIsIdeaModalOpen } = useTasks();
   const [isEditing, setIsEditing] = useState(false);
   const [nameInput, setNameInput] = useState(profile.display_name || 'Saad');
   const [backupMessage, setBackupMessage] = useState('');
+  const [geminiKeyInput, setGeminiKeyInput] = useState(geminiService.getApiKey());
+  const [geminiSavedMessage, setGeminiSavedMessage] = useState('');
   const [backendStatus, setBackendStatus] = useState<{
     connected: boolean;
     database: string;
     source: string;
   } | null>(null);
   const [checkingBackend, setCheckingBackend] = useState(false);
+
+  const handleSaveGeminiKey = () => {
+    geminiService.setApiKey(geminiKeyInput);
+    setGeminiSavedMessage('✓ Gemini API Key saved locally!');
+    setTimeout(() => setGeminiSavedMessage(''), 3000);
+  };
 
   const checkStatus = async () => {
     setCheckingBackend(true);
@@ -191,6 +206,63 @@ export const ProfilePage: React.FC = () => {
             ? `Tasks are saved to Render backend & synced with ${backendStatus.database}.`
             : 'Tasks are currently saved locally on your device. Set VITE_API_URL on Vercel to sync with Render.'}
         </p>
+      </div>
+
+      {/* Google Gemini AI Configuration Card */}
+      <div className="rounded-[24px] bg-white p-4 border border-[#EDE8F5] shadow-2xs space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F0EFFF] text-[#6C5CE7]">
+              <Lightbulb className="h-4 w-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-[#1E1B2E]">Google Gemini AI</h4>
+              <p className="text-[10px] text-[#8B88A0] font-semibold">Powers AI Idea Scorer & Research</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsIdeaModalOpen(true)}
+            className="flex items-center gap-1 rounded-full bg-[#6C5CE7] px-3 py-1.5 text-[11px] font-black text-white hover:bg-[#5B4BC4] shadow-xs active:scale-95 transition-all"
+          >
+            <span>Open Idea Lab</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-bold text-[#1E1B2E]">Gemini API Key:</span>
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[10px] font-extrabold text-[#6C5CE7] hover:underline flex items-center gap-0.5"
+            >
+              <span>Get Free Key</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="password"
+              value={geminiKeyInput}
+              onChange={(e) => setGeminiKeyInput(e.target.value)}
+              placeholder="Paste AIzaSy... key (stored locally in browser)"
+              className="flex-1 rounded-xl bg-[#F8F9FE] border border-[#EDE8F5] px-3 py-2 text-xs font-semibold text-[#1E1B2E] focus:outline-hidden focus:ring-2 focus:ring-[#6C5CE7]/30"
+            />
+            <button
+              type="button"
+              onClick={handleSaveGeminiKey}
+              className="rounded-xl bg-[#6C5CE7] px-3.5 py-2 text-xs font-black text-white hover:bg-[#5B4BC4]"
+            >
+              Save
+            </button>
+          </div>
+          {geminiSavedMessage && (
+            <p className="text-[10px] font-bold text-emerald-600">{geminiSavedMessage}</p>
+          )}
+        </div>
       </div>
 
       {backupMessage && (

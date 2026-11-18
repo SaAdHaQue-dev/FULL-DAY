@@ -16,6 +16,7 @@ import {
   Calendar,
   Layers,
   Check,
+  Lightbulb,
 } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 import { useAuth } from '../context/AuthContext';
@@ -32,6 +33,7 @@ export const DashboardPage: React.FC = () => {
     setIsVoiceModalOpen,
     setIsAIModalOpen,
     setIsTimerOpen,
+    setIsIdeaModalOpen,
     toggleTaskComplete,
     createTask,
   } = useTasks();
@@ -233,6 +235,30 @@ export const DashboardPage: React.FC = () => {
           </div>
           <span className="text-[11px] font-bold text-[#1E1B2E]">AI Plan</span>
         </button>
+      </div>
+
+      {/* AI Idea Lab & Validator Banner */}
+      <div 
+        onClick={() => setIsIdeaModalOpen(true)}
+        className="rounded-[24px] bg-gradient-to-r from-[#6C5CE7] to-[#8070F8] p-4 text-white shadow-md shadow-[#6C5CE7]/20 flex items-center justify-between cursor-pointer hover:opacity-95 active:scale-98 transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-white shadow-xs">
+            <Lightbulb className="h-6 w-6 stroke-[2.2]" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-xs font-black tracking-tight">AI Idea Lab & Validator</h4>
+              <span className="rounded-full bg-white/25 px-2 py-0.5 text-[9px] font-black uppercase">Gemini AI</span>
+            </div>
+            <p className="text-[11px] text-white/85 font-medium mt-0.5">
+              Score your idea, research market & get a step-by-step roadmap
+            </p>
+          </div>
+        </div>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white shrink-0 ml-2">
+          <ArrowRight className="h-4 w-4" />
+        </div>
       </div>
 
       {/* Inline Quick Add Task Input */}

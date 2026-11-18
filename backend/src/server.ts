@@ -5,6 +5,7 @@ import { connectDB, isDatabaseConnected } from './config/db.js';
 import { taskRouter } from './routes/taskRoutes.js';
 import { projectRouter } from './routes/projectRoutes.js';
 import { healthRouter } from './routes/healthRoutes.js';
+import { aiRouter } from './routes/aiRoutes.js';
 
 dotenv.config();
 
@@ -73,6 +74,7 @@ app.use('/healthz', healthRouter);
 app.use('/api/health', healthRouter);
 app.use('/api/tasks', taskRouter);
 app.use('/api/projects', projectRouter);
+app.use('/api/ai', aiRouter);
 
 // Global Error Handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

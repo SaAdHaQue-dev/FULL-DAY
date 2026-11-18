@@ -236,21 +236,31 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Inline Quick Add Task Input */}
-      <form onSubmit={handleQuickAddSubmit} className="relative">
+      <form onSubmit={handleQuickAddSubmit} className="relative flex items-center">
         <input
           type="text"
           value={quickTitle}
           onChange={(e) => setQuickTitle(e.target.value)}
           placeholder="+ Quickly capture a task and press enter..."
-          className="w-full rounded-2xl bg-white border border-[#EDE8F5] py-3 pl-4 pr-12 text-xs font-semibold text-[#1E1B2E] placeholder-[#A09CB0] shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#6C5CE7]/30 focus:border-[#6C5CE7]"
+          className="w-full rounded-2xl bg-white border border-[#EDE8F5] py-3 pl-4 pr-20 text-xs font-semibold text-[#1E1B2E] placeholder-[#A09CB0] shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#6C5CE7]/30 focus:border-[#6C5CE7]"
         />
-        <button
-          type="submit"
-          disabled={!quickTitle.trim()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-xl bg-[#6C5CE7] text-white disabled:opacity-40"
-        >
-          <Plus className="h-4 w-4 stroke-[3]" />
-        </button>
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setIsVoiceModalOpen(true)}
+            title="Voice Task Storing"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-[#20C997] hover:bg-[#E8F8F0] active:scale-95 transition-all"
+          >
+            <Mic className="h-4 w-4 stroke-[2.5]" />
+          </button>
+          <button
+            type="submit"
+            disabled={!quickTitle.trim()}
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#6C5CE7] text-white disabled:opacity-40 hover:bg-[#5B4BC4] transition-colors"
+          >
+            <Plus className="h-4 w-4 stroke-[3]" />
+          </button>
+        </div>
       </form>
 
       {/* Today's Tasks Section */}

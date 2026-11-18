@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { ListTodo, Plus, Filter, ArrowUpDown } from 'lucide-react';
+import { ListTodo, Plus, Filter, ArrowUpDown, Mic } from 'lucide-react';
 import { useTasks } from '../context/TaskContext';
 import { TaskItem } from '../components/tasks/TaskItem';
 import { EmptyState } from '../components/common/EmptyState';
 import { TaskPriority } from '../types';
 
 export const AllTasksPage: React.FC = () => {
-  const { tasks, projects, setIsQuickAddOpen, filters, setFilters } = useTasks();
+  const { tasks, projects, setIsQuickAddOpen, setIsVoiceModalOpen, filters, setFilters } = useTasks();
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -62,13 +62,23 @@ export const AllTasksPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsQuickAddOpen(true)}
-          className="flex items-center gap-2 rounded-full bg-[#7065F0] px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-[#7065F0]/25 hover:bg-[#6055E8] active:scale-95 transition-all"
-        >
-          <Plus className="h-4 w-4 stroke-[3]" />
-          <span>Add Task</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsVoiceModalOpen(true)}
+            className="flex items-center gap-1.5 rounded-full bg-[#E8F8F0] px-4 py-2.5 text-xs font-extrabold text-[#20C997] hover:bg-[#D3F5E7] active:scale-95 transition-all shadow-xs"
+            title="Voice Task Storing"
+          >
+            <Mic className="h-4 w-4 stroke-[2.5]" />
+            <span>Voice Add</span>
+          </button>
+          <button
+            onClick={() => setIsQuickAddOpen(true)}
+            className="flex items-center gap-2 rounded-full bg-[#7065F0] px-5 py-2.5 text-xs font-extrabold text-white shadow-md shadow-[#7065F0]/25 hover:bg-[#6055E8] active:scale-95 transition-all"
+          >
+            <Plus className="h-4 w-4 stroke-[3]" />
+            <span>Add Task</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Sort Toolbar */}

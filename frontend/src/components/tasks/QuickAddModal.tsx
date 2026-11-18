@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, FolderKanban } from 'lucide-react';
+import { X, Calendar, Clock, FolderKanban, Mic } from 'lucide-react';
 import { useTasks } from '../../context/TaskContext';
 import { TaskPriority } from '../../types';
 import { format } from 'date-fns';
 
 export const QuickAddModal: React.FC = () => {
-  const { isQuickAddOpen, setIsQuickAddOpen, createTask, projects } = useTasks();
+  const { isQuickAddOpen, setIsQuickAddOpen, setIsVoiceModalOpen, createTask, projects } = useTasks();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -45,12 +45,26 @@ export const QuickAddModal: React.FC = () => {
       <div className="w-full max-w-lg rounded-[28px] bg-white p-6 shadow-2xl border border-[#EDE8F5] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#EDE8F5]">
-          <h2 className="text-lg font-black text-[#1E1B2E]">Create New Task or Word</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-black text-[#1E1B2E]">Create New Task</h2>
+            <button
+              type="button"
+              onClick={() => {
+                setIsQuickAddOpen(false);
+                setIsVoiceModalOpen(true);
+              }}
+              className="flex items-center gap-1 rounded-full bg-[#E8F8F0] px-2.5 py-1 text-[11px] font-extrabold text-[#20C997] hover:bg-[#D3F5E7] active:scale-95 transition-all"
+              title="Dictate with voice"
+            >
+              <Mic className="h-3 w-3 stroke-[2.5]" />
+              <span>Voice</span>
+            </button>
+          </div>
           <button
             onClick={() => setIsQuickAddOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F3F8] text-[#18171E] hover:bg-[#EAE8F2] dark:bg-[#292833] dark:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F4F3F8] text-[#8B88A0] hover:text-[#1E1B2E] hover:bg-[#EAE8F2] transition-colors"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
